@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/app.config';
 import { validationSchema } from './config/validation.schema';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -28,6 +29,9 @@ import { ThrottlerModule } from '@nestjs/throttler';
       }),
       inject: [ConfigService],
     }),
+
+    // Feature Modules
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
