@@ -84,7 +84,7 @@ export class User {
   lockUntil?: Date;
 
   @Prop({ type: Date, default: null })
-  deletedAt?: Date;
+  deletedAt?: Date | null;
 
   @Expose()
   get fullName(): string {
@@ -93,6 +93,10 @@ export class User {
 
   isLocked(): boolean {
     return !!(this.lockUntil && this.lockUntil > new Date());
+  }
+  get id(): string {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    return (this as any)._id?.toString();
   }
 }
 
@@ -115,3 +119,12 @@ UserSchema.pre(
     next();
   },
 );
+
+// Virtual id
+UserSchema.virtual('id').get(function () {
+  return this._id.toHexString();
+});
+
+// Make sure virtuals are included when converting to object/JSON
+UserSchema.set('toJSON', { virtuals: true });
+UserSchema.set('toObject', { virtuals: true });
