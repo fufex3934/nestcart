@@ -9,7 +9,7 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
 
   // Global Prefix
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api/v1');
 
   const port = configService.get<number>('app.port') || 3000;
   await app.listen(port);
