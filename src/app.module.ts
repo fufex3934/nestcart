@@ -11,6 +11,8 @@ import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { ValidationPipe } from './common/pipes/validation.pipe';
 import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { CorrelationIdMiddleware } from './common/middleware/correlation-id.midd
 
     // Feature Modules
     HealthModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
