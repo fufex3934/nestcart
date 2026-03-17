@@ -1,11 +1,16 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/app.config';
 import { validationSchema } from './config/validation.schema';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './modules/health/health.module';
+import { DatabaseModule } from './shared/database/database.module';
+import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { ValidationPipe } from './common/pipes/validation.pipe';
+import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 
 @Module({
   imports: [
@@ -30,10 +35,39 @@ import { HealthModule } from './modules/health/health.module';
       inject: [ConfigService],
     }),
 
+    // Database Module
+    DatabaseModule,
+
     // Feature Modules
     HealthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // Global Guards
+    {
+      provide: 'APP_GUARD',
+      useClass: ThrottlerGuard,
+    },
+    // Global Filters
+    {
+      provide: 'APP_FILTER',
+      useClass: AllExceptionsFilter,
+    },
+    // Global Interceptors
+    {
+      provide: 'APP_INTERCEPTOR',
+      useClass: TransformInterceptor,
+    },
+    // Global Pipes
+    {
+      provide: 'APP_PIPE',
+      useClass: ValidationPipe,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorrelationIdMiddleware).forRoutes('*'); // Apply to all routes
+  }
+}

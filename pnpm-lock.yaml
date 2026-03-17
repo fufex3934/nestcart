@@ -59,6 +59,9 @@ importers:
       mongoose:
         specifier: ^9.3.0
         version: 9.3.0
+      mongoose-autopopulate:
+        specifier: ^1.2.1
+        version: 1.2.1(mongoose@9.3.0)
       morgan:
         specifier: ^1.10.1
         version: 1.10.1
@@ -111,6 +114,9 @@ importers:
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
+      '@types/mongoose-autopopulate':
+        specifier: ^0.16.0
+        version: 0.16.0(mongoose@9.3.0)
       '@types/morgan':
         specifier: ^1.9.10
         version: 1.9.10
@@ -959,6 +965,10 @@ packages:
 
   '@types/methods@1.1.4':
     resolution: {integrity: sha512-ymXWVrDiCxTBE3+RIrrP533E70eA+9qu7zdWoHuOmGujkYtzf4HQF96b8nwHLqhuf4ykX61IGRIB38CC6/sImQ==}
+
+  '@types/mongoose-autopopulate@0.16.0':
+    resolution: {integrity: sha512-phdHqJXi7TceAUJ96s4hzBSl/S+z5uas6jjVvjI2ovstqmGjfjYRX8hO97qmFgAS38dY7DcVDx16QjkuMnl3sQ==}
+    deprecated: This is a stub types definition. mongoose-autopopulate provides its own type definitions, so you do not need this installed.
 
   '@types/morgan@1.9.10':
     resolution: {integrity: sha512-sS4A1zheMvsADRVfT0lYbJ4S9lmsey8Zo2F7cnbYjWHP67Q0AwMYuuzLlkIM2N8gAbb9cubhIVFwcIN2XyYCkA==}
@@ -2574,6 +2584,11 @@ packages:
         optional: true
       socks:
         optional: true
+
+  mongoose-autopopulate@1.2.1:
+    resolution: {integrity: sha512-mn6AM7iFqsB9Rqyp2XD3tqXgC+X9dEv+H+eVmunskSb3fqiT6umgwkVPpIm7+Xe5h9/b3mIP/Le670Rx6lLnUw==}
+    peerDependencies:
+      mongoose: 6.x || 7.x || 8.x || ^9.0.0-0
 
   mongoose@9.3.0:
     resolution: {integrity: sha512-Tv2p3DLBkftoGFp+VM/19k0t0RYPAAYjGIbCVGlV6Tf5Dnq6TICfYyeKeYvwQ06nK9sRDvymP3B+tjGHnUlaxw==}
@@ -4359,6 +4374,12 @@ snapshots:
       '@types/node': 22.19.15
 
   '@types/methods@1.1.4': {}
+
+  '@types/mongoose-autopopulate@0.16.0(mongoose@9.3.0)':
+    dependencies:
+      mongoose-autopopulate: 1.2.1(mongoose@9.3.0)
+    transitivePeerDependencies:
+      - mongoose
 
   '@types/morgan@1.9.10':
     dependencies:
@@ -6158,6 +6179,10 @@ snapshots:
       '@mongodb-js/saslprep': 1.4.6
       bson: 7.2.0
       mongodb-connection-string-url: 7.0.1
+
+  mongoose-autopopulate@1.2.1(mongoose@9.3.0):
+    dependencies:
+      mongoose: 9.3.0
 
   mongoose@9.3.0:
     dependencies:
