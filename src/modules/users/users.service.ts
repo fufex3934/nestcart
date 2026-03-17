@@ -250,7 +250,7 @@ export class UsersService {
     await this.userModel.updateOne({ _id: id }, { deletedAt: new Date() });
   }
 
-  async restore(id: string): Promise<User> {
+  async restore(id: string): Promise<UserDocument> {
     const user = await this.userModel.findOne({
       _id: id,
       deletedAt: { $ne: null },
