@@ -18,23 +18,7 @@ import { ProductStatus } from '../enums/product-status.enum';
 import { ProductVisibility } from '../enums/product-visibility.enum';
 import { PartialType } from '@nestjs/mapped-types';
 
-class ShippingDto {
-  @IsNumber()
-  @Min(0)
-  weight: number;
-
-  @IsEnum(['g', 'kg', 'lb', 'oz'])
-  weightUnit: 'g' | 'kg' | 'lb' | 'oz';
-
-  @ValidateNested()
-  @Type(() => DimensionsDto)
-  dimensions: DimensionsDto;
-
-  @IsOptional()
-  @IsBoolean()
-  freeShipping?: boolean;
-}
-
+// Move DimensionsDto BEFORE ShippingDto since ShippingDto references it
 class DimensionsDto {
   @IsNumber()
   @Min(0)
@@ -50,6 +34,23 @@ class DimensionsDto {
 
   @IsEnum(['cm', 'in'])
   unit: 'cm' | 'in';
+}
+
+class ShippingDto {
+  @IsNumber()
+  @Min(0)
+  weight: number;
+
+  @IsEnum(['g', 'kg', 'lb', 'oz'])
+  weightUnit: 'g' | 'kg' | 'lb' | 'oz';
+
+  @ValidateNested()
+  @Type(() => DimensionsDto)
+  dimensions: DimensionsDto;
+
+  @IsOptional()
+  @IsBoolean()
+  freeShipping?: boolean;
 }
 
 class SeoDto {
