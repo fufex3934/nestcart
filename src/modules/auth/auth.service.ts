@@ -65,13 +65,10 @@ export class AuthService {
       throw new ConflictException('User already exists');
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-
-    // Create user
+    // Don't hash here - let the UsersService handle it
     const user = await this.usersService.create({
       ...registerDto,
-      password: hashedPassword,
+      // password is passed as plain text
     });
 
     // Generate email verification token
@@ -99,7 +96,8 @@ export class AuthService {
     const user = await this.usersService.findByEmailWithPassword(
       loginDto.email,
     );
-
+    console.log('DB password hash:', user?.password);
+    console.log('Login password:', loginDto.password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -234,14 +232,20 @@ export class AuthService {
       role: user.role,
     };
 
+    // Use string directly
+    const accessTokenExpiresIn = this.configService.get('jwt.expiresIn'); // "7d"
+    const refreshTokenExpiresIn = this.configService.get(
+      'jwt.refreshTokenExpiresIn',
+    ); // "30d"
+
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('jwt.secret'),
-        expiresIn: this.configService.get('jwt.expiresIn'),
+        expiresIn: accessTokenExpiresIn, // ✅ pass string
       }),
       this.jwtService.signAsync(payload, {
-        secret: this.configService.get('jwt.refreshSecret'),
-        expiresIn: this.configService.get('jwt.refreshExpiresIn'),
+        secret: this.configService.get('jwt.refreshTokenSecret'),
+        expiresIn: refreshTokenExpiresIn, // ✅ pass string
       }),
     ]);
 
@@ -251,8 +255,7 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-
-      expiresIn: this.configService.get('jwt.expiresIn'),
+      expiresIn: accessTokenExpiresIn, // can return "7d"
     };
   }
 }

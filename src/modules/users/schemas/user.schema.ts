@@ -3,7 +3,6 @@ import { Exclude, Expose } from 'class-transformer';
 import { HydratedDocument } from 'mongoose';
 import { UserRole } from '../enums/user-role.enum';
 import { UserStatus } from '../enums/user-status.enum';
-import { CallbackWithoutResultAndOptionalError } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -110,15 +109,11 @@ UserSchema.index({ deletedAt: 1 });
 UserSchema.index({ loginAttempts: 1, lockUntil: 1 });
 
 // Pre-save middleware - FIXED VERSION
-UserSchema.pre(
-  'save',
-  function (this: UserDocument, next: CallbackWithoutResultAndOptionalError) {
-    if (this.email) {
-      this.email = this.email.toLowerCase();
-    }
-    next();
-  },
-);
+UserSchema.pre('save', function (this: UserDocument) {
+  if (this.email) {
+    this.email = this.email.toLowerCase();
+  }
+});
 
 // Virtual id
 UserSchema.virtual('id').get(function () {
