@@ -19,7 +19,7 @@ export class Category {
   @Prop({ required: true, trim: true, unique: true })
   name: string;
 
-  @Prop({ required: true, trim: true, unique: true, lowercase: true })
+  @Prop({ required: false, trim: true, unique: true, lowercase: true })
   slug: string;
 
   @Prop({ trim: true })
@@ -55,8 +55,6 @@ export class Category {
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
 
-CategorySchema.index({ slug: 1 });
-CategorySchema.index({ parentId: 1, isActive: 1 });
 CategorySchema.index({ name: 'text', description: 'text' });
 
 // Pre-save middleware to generate slug

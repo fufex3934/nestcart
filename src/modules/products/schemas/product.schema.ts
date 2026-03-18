@@ -138,7 +138,7 @@ export class Product {
 export const ProductSchema = SchemaFactory.createForClass(Product);
 
 // Indexes for search and filtering
-ProductSchema.index({ slug: 1 });
+
 ProductSchema.index({ sku: 1 }, { unique: true });
 ProductSchema.index({ categoryId: 1, status: 1, visibility: 1 });
 ProductSchema.index({ price: 1 });

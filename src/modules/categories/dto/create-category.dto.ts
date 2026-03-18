@@ -10,7 +10,6 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateCategoryDto {
   @ApiProperty({ example: 'Electronics' })
@@ -45,5 +44,3 @@ export class CreateCategoryDto {
   @IsOptional()
   metadata?: Record<string, any>;
 }
-
-export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}

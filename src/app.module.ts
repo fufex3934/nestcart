@@ -68,10 +68,10 @@ import { ProductsModule } from './modules/products/products.module';
       useClass: TransformInterceptor,
     },
     // Global Pipes
-    {
-      provide: 'APP_PIPE',
-      useClass: ValidationPipe,
-    },
+    // {
+    //   provide: 'APP_PIPE',
+    //   useClass: ValidationPipe,
+    // },
   ],
 })
 export class AppModule implements NestModule {

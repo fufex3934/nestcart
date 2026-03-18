@@ -12,10 +12,8 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import {
-  CreateCategoryDto,
-  UpdateCategoryDto,
-} from './dto/create-category.dto';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 import { QueryCategoryDto } from './dto/query-category.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';

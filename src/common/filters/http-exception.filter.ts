@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  ConflictException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Error as MongooseError } from 'mongoose';
@@ -38,21 +39,32 @@ export class AllExceptionsFilter implements ExceptionFilter {
         details = (exceptionResponse as any).details || null;
       }
       error = exception.name;
+    }
+    // Check for MongoDB errors (they have a code property)
+    else if (exception instanceof Error && 'code' in exception) {
+      const mongoError = exception as any;
+
+      // Handle duplicate key error (code 11000)
+      if (mongoError.code === 11000) {
+        status = HttpStatus.CONFLICT;
+        error = 'DuplicateKeyError';
+        message = 'Duplicate key error';
+        details = this.extractDuplicateKeyError(mongoError);
+      }
+      // Handle other MongoDB errors
+      else {
+        status = HttpStatus.BAD_REQUEST;
+        error = 'DatabaseError';
+        message = mongoError.message || 'Database operation failed';
+        details = {
+          code: mongoError.code,
+          name: mongoError.name,
+        };
+      }
     } else if (exception instanceof MongooseError) {
       status = HttpStatus.BAD_REQUEST;
-      error = 'Database Error';
-
-      // Handle MongoDB specific errors
-      // Note: MongooseError doesn't have 'code' property directly
-      const mongoError = exception as any;
-      switch (mongoError.code) {
-        case 11000:
-          message = 'Duplicate key error';
-          details = this.extractDuplicateKeyError(exception.message);
-          break;
-        default:
-          message = 'Database operation failed';
-      }
+      error = 'MongooseError';
+      message = exception.message;
     } else if (exception instanceof Error) {
       message = exception.message;
       error = exception.name;
@@ -64,6 +76,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status,
       error,
       message,
+      details,
       path: request.url,
       method: request.method,
       ip: request.ip,
@@ -83,15 +96,24 @@ export class AllExceptionsFilter implements ExceptionFilter {
     });
   }
 
-  private extractDuplicateKeyError(message: string): any {
-    // Parse MongoDB duplicate key error
-    const match = message.match(/index: (.+?) dup key: (.+)/);
-    if (match) {
+  private extractDuplicateKeyError(error: any): any {
+    try {
+      // Extract the field and value from the error
+      const keyPattern = error.keyPattern || {};
+      const keyValue = error.keyValue || {};
+
+      const field = Object.keys(keyPattern)[0] || 'unknown';
+      const value = keyValue[field] || 'unknown';
+
       return {
-        index: match[1],
-        key: match[2],
+        field,
+        value,
+        message: `A category with ${field} "${value}" already exists`,
+      };
+    } catch (e) {
+      return {
+        message: error.message || 'Duplicate key error',
       };
     }
-    return null;
   }
 }
